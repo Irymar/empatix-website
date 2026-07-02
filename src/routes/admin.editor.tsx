@@ -37,8 +37,10 @@ export const Route = createFileRoute("/admin/editor")({
 });
 
 type Selection =
-  | { kind: "section"; target: string; label: string }
+  | { kind: "section"; target: string; label: string; field?: string }
   | { kind: "collection"; target: string; label: string }
+  | { kind: "field"; target: string; label: string; field: string }
+  | { kind: "item"; target: string; label: string; itemId: string }
   | null;
 
 type Device = "desktop" | "tablet" | "mobile";
@@ -111,7 +113,13 @@ function VisualEditor() {
       const msg = e.data;
       if (!msg || msg.source !== "empatix-cms") return;
       if (msg.type === "select") {
-        setSelection({ kind: msg.kind, target: msg.target, label: msg.label });
+        if (msg.kind === "field") {
+          setSelection({ kind: "field", target: msg.target, label: msg.label, field: msg.field });
+        } else if (msg.kind === "item") {
+          setSelection({ kind: "item", target: msg.target, label: msg.label, itemId: msg.itemId });
+        } else {
+          setSelection({ kind: msg.kind, target: msg.target, label: msg.label });
+        }
       }
     }
     window.addEventListener("message", onMessage);
@@ -210,13 +218,27 @@ function VisualEditor() {
         <aside className="flex w-[min(420px,42vw)] min-w-80 shrink-0 flex-col overflow-hidden border-l border-border bg-card">
           {!selection ? (
             <EmptyPanel />
-          ) : selection.kind === "section" ? (
+          ) : selection.kind === "section" || selection.kind === "field" ? (
             <SectionPanel
-              key={`section-${selection.target}`}
+              key={`section-${selection.target}-${(selection as any).field ?? ""}`}
               target={selection.target}
               label={selection.label}
+              focusField={(selection as any).field ?? null}
               onClose={() => {
                 sendPreview({ type: "clear-section", key: selection.target });
+                setSelection(null);
+              }}
+              onSaved={onSaved}
+              sendPreview={sendPreview}
+            />
+          ) : selection.kind === "item" ? (
+            <CollectionPanel
+              key={`collection-${selection.target}-${selection.itemId}`}
+              target={selection.target}
+              label={selection.label}
+              initialItemId={selection.itemId}
+              onClose={() => {
+                sendPreview({ type: "clear-collection", key: selection.target });
                 setSelection(null);
               }}
               onSaved={onSaved}
@@ -273,12 +295,14 @@ function PanelHeader({ label, kind, onClose }: { label: string; kind: string; on
 function SectionPanel({
   target,
   label,
+  focusField,
   onClose,
   onSaved,
   sendPreview,
 }: {
   target: string;
   label: string;
+  focusField?: string | null;
   onClose: () => void;
   onSaved: () => void;
   sendPreview: (msg: Record<string, unknown>) => void;
@@ -293,6 +317,12 @@ function SectionPanel({
     queryFn: () => getFn({ data: { key: target } }),
     enabled: !!def,
   });
+  const focusRef = useRef<HTMLDivElement | null>(null);
+  useEffect(() => {
+    if (focusField && focusRef.current) {
+      setTimeout(() => focusRef.current?.scrollIntoView({ behavior: "smooth", block: "center" }), 120);
+    }
+  }, [focusField]);
 
   const initial = useMemo(
     () => ({ ...(def?.defaults ?? {}), ...(((query.data as any)?.data ?? {}) as Record<string, any>) }),
@@ -342,14 +372,22 @@ function SectionPanel({
         <ScrollArea className="min-w-0 flex-1">
           <div className="min-w-0 space-y-5 p-4">
             <p className="break-words text-xs text-muted-foreground">{def.description}</p>
-          {def.fields.map((f) => (
-            <FieldRenderer
-              key={f.key}
-              field={f}
-              value={values[f.key]}
-              onChange={(v) => updateField(f.key, v)}
-            />
-          ))}
+          {def.fields.map((f) => {
+            const isFocused = focusField === f.key;
+            return (
+              <div
+                key={f.key}
+                ref={isFocused ? focusRef : null}
+                className={isFocused ? "rounded-md ring-2 ring-brand-sky ring-offset-2 ring-offset-card p-1 -m-1" : ""}
+              >
+                <FieldRenderer
+                  field={f}
+                  value={values[f.key]}
+                  onChange={(v) => updateField(f.key, v)}
+                />
+              </div>
+            );
+          })}
         </div>
       </ScrollArea>
       <div className="grid grid-cols-2 gap-2 border-t border-border p-3 sm:flex sm:items-center sm:justify-end">
@@ -368,12 +406,14 @@ function SectionPanel({
 function CollectionPanel({
   target,
   label,
+  initialItemId,
   onClose,
   onSaved,
   sendPreview,
 }: {
   target: string;
   label: string;
+  initialItemId?: string;
   onClose: () => void;
   onSaved: () => void;
   sendPreview: (msg: Record<string, unknown>) => void;
@@ -391,7 +431,7 @@ function CollectionPanel({
     enabled: !!def,
   });
 
-  const [editingId, setEditingId] = useState<string | null>(null);
+  const [editingId, setEditingId] = useState<string | null>(initialItemId ?? null);
   const [localRows, setLocalRows] = useState<CollectionEditorRow[]>([]);
   const rows = useMemo(
     () => mergeCollectionRows(((list.data as CollectionEditorRow[] | undefined) ?? []), localRows),

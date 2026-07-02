@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { Menu, X } from "lucide-react";
 import { Logo } from "./Logo";
+import { CmsMark } from "./CmsMark";
 
 const NAV = [
   { to: "/services", label: "Services" },
@@ -35,9 +36,9 @@ export function SiteHeader() {
         }`}
       >
         <div className={`container-x flex items-center justify-between transition-all duration-300 ${scrolled ? "h-14" : "h-16"}`}>
-          <div className="transition-transform duration-200 hover:scale-[1.04]">
+          <CmsMark kind="section" target="branding" label="Logo / Branding" as="div" className="transition-transform duration-200 hover:scale-[1.04]">
             <Logo />
-          </div>
+          </CmsMark>
           <nav className="hidden items-center gap-1 lg:flex">
             {NAV.map((item) => (
               <Link

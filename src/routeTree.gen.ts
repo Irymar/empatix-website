@@ -32,6 +32,7 @@ import { Route as AdminUsersRouteImport } from './routes/admin.users'
 import { Route as AdminMediaRouteImport } from './routes/admin.media'
 import { Route as AdminLoginRouteImport } from './routes/admin.login'
 import { Route as AdminEditorRouteImport } from './routes/admin.editor'
+import { Route as AdminBrandingRouteImport } from './routes/admin.branding'
 import { Route as AdminAuditRouteImport } from './routes/admin.audit'
 import { Route as ApiPublicContactRouteImport } from './routes/api/public/contact'
 import { Route as AdminContentSectionRouteImport } from './routes/admin.content.$section'
@@ -154,6 +155,11 @@ const AdminEditorRoute = AdminEditorRouteImport.update({
   path: '/editor',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminBrandingRoute = AdminBrandingRouteImport.update({
+  id: '/branding',
+  path: '/branding',
+  getParentRoute: () => AdminRoute,
+} as any)
 const AdminAuditRoute = AdminAuditRouteImport.update({
   id: '/audit',
   path: '/audit',
@@ -203,6 +209,7 @@ export interface FileRoutesByFullPath {
   '/team-extension': typeof TeamExtensionRoute
   '/terms': typeof TermsRoute
   '/admin/audit': typeof AdminAuditRoute
+  '/admin/branding': typeof AdminBrandingRoute
   '/admin/editor': typeof AdminEditorRoute
   '/admin/login': typeof AdminLoginRoute
   '/admin/media': typeof AdminMediaRoute
@@ -232,6 +239,7 @@ export interface FileRoutesByTo {
   '/team-extension': typeof TeamExtensionRoute
   '/terms': typeof TermsRoute
   '/admin/audit': typeof AdminAuditRoute
+  '/admin/branding': typeof AdminBrandingRoute
   '/admin/editor': typeof AdminEditorRoute
   '/admin/login': typeof AdminLoginRoute
   '/admin/media': typeof AdminMediaRoute
@@ -297,6 +305,7 @@ export interface FileRouteTypes {
     | '/team-extension'
     | '/terms'
     | '/admin/audit'
+    | '/admin/branding'
     | '/admin/editor'
     | '/admin/login'
     | '/admin/media'
@@ -326,6 +335,7 @@ export interface FileRouteTypes {
     | '/team-extension'
     | '/terms'
     | '/admin/audit'
+    | '/admin/branding'
     | '/admin/editor'
     | '/admin/login'
     | '/admin/media'
@@ -357,6 +367,7 @@ export interface FileRouteTypes {
     | '/team-extension'
     | '/terms'
     | '/admin/audit'
+    | '/admin/branding'
     | '/admin/editor'
     | '/admin/login'
     | '/admin/media'
@@ -555,6 +566,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminEditorRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/branding': {
+      id: '/admin/branding'
+      path: '/branding'
+      fullPath: '/admin/branding'
+      preLoaderRoute: typeof AdminBrandingRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/audit': {
       id: '/admin/audit'
       path: '/audit'
@@ -613,6 +631,7 @@ const AdminCollectionsTypeRouteWithChildren =
 
 interface AdminRouteChildren {
   AdminAuditRoute: typeof AdminAuditRoute
+  AdminBrandingRoute: typeof AdminBrandingRoute
   AdminEditorRoute: typeof AdminEditorRoute
   AdminLoginRoute: typeof AdminLoginRoute
   AdminMediaRoute: typeof AdminMediaRoute
@@ -624,6 +643,7 @@ interface AdminRouteChildren {
 
 const AdminRouteChildren: AdminRouteChildren = {
   AdminAuditRoute: AdminAuditRoute,
+  AdminBrandingRoute: AdminBrandingRoute,
   AdminEditorRoute: AdminEditorRoute,
   AdminLoginRoute: AdminLoginRoute,
   AdminMediaRoute: AdminMediaRoute,

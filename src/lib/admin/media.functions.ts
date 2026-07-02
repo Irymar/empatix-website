@@ -64,7 +64,7 @@ export const adminUploadMedia = createServerFn({ method: "POST" })
       }
     }
 
-    const publicUrl = `/api/public/media/${path}`;
+    const publicUrl = `${process.env.SUPABASE_URL}/storage/v1/object/public/media/${path}`;
     const { data: row, error } = await (context as any).supabase
       .from("media_assets")
       .insert({
