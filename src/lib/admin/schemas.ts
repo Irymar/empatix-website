@@ -38,6 +38,17 @@ export type CollectionDef = {
 // ---- Singleton sections ----
 export const SECTIONS: SectionDef[] = [
   {
+    key: "branding",
+    label: "Branding / Logo",
+    description: "Upload custom logo files. Leave blank to use the default built-in SVGs.",
+    fields: [
+      { key: "markUrl", label: "Icon mark (favicon / small logo)", type: "image", help: "SVG or PNG, displayed at 36×36 px. Used in the header mark and favicon area." },
+      { key: "logoWhiteUrl", label: "Full logo — white (header)", type: "image", help: "SVG or PNG on transparent background, displayed at 36 px tall. Used in the top navigation bar." },
+      { key: "logoDarkUrl", label: "Full logo — hero", type: "image", help: "SVG or PNG used as the large decorative hero graphic above the fold." },
+    ],
+    defaults: { markUrl: "", logoWhiteUrl: "", logoDarkUrl: "" },
+  },
+  {
     key: "hero",
     label: "Hero",
     description: "Main headline shown on the homepage.",

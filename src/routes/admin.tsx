@@ -15,6 +15,7 @@ import {
   PanelLeftClose,
   PanelLeftOpen,
   MousePointerClick,
+  Palette,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
@@ -116,6 +117,7 @@ function AdminShell() {
 
   const nav = [
     { to: "/admin/editor", label: "Visual Editor", icon: MousePointerClick, exact: false },
+    { to: "/admin/branding", label: "Branding / Logo", icon: Palette, exact: false },
     { to: "/admin/media", label: "Media Library", icon: ImageIcon, exact: false },
     { to: "/admin/users", label: "Admins", icon: Users, exact: false },
     { to: "/admin/audit", label: "Audit Log", icon: ScrollText, exact: false },

@@ -10,6 +10,7 @@ import {
 import { SiteLayout } from "@/components/SiteLayout";
 import { CmsMark } from "@/components/CmsMark";
 import { useCmsSection, useCmsCollection } from "@/lib/cms/useCmsContent";
+import { useHeroLogoUrl } from "@/components/Logo";
 import { RevealGroup, RevealItem, Reveal } from "@/components/motion/Reveal";
 import { CountUp } from "@/components/motion/CountUp";
 import { ICON_OPTIONS } from "@/components/admin/IconPicker";
@@ -157,6 +158,7 @@ type HeroContent = {
 
 function Hero() {
   const c = useCmsSection<HeroContent>("hero");
+  const heroLogoUrl = useHeroLogoUrl();
   return (
     <section className="relative overflow-hidden">
       <div aria-hidden className="pointer-events-none absolute inset-0 -z-10">
@@ -177,8 +179,8 @@ function Hero() {
           style={{
             background:
               "linear-gradient(115deg, #6FA8FF 0%, #6FA8FF 42%, #2547E0 50%, #1B3A99 70%, #050912 100%)",
-            WebkitMaskImage: `url(/empatix-logo-dark.svg)`,
-            maskImage: `url(/empatix-logo-dark.svg)`,
+            WebkitMaskImage: `url(${heroLogoUrl})`,
+            maskImage: `url(${heroLogoUrl})`,
             WebkitMaskRepeat: "no-repeat",
             maskRepeat: "no-repeat",
             WebkitMaskSize: "contain",

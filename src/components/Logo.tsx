@@ -1,14 +1,22 @@
 import { Link } from "@tanstack/react-router";
+import { useCmsSection } from "@/lib/cms/useCmsContent";
 
 interface LogoProps {
   variant?: "full" | "mark";
   className?: string;
 }
 
+function useBrandingUrls() {
+  const branding = useCmsSection<{ markUrl: string; logoWhiteUrl: string; logoDarkUrl: string }>("branding");
+  return branding;
+}
+
 export function LogoMark({ className = "" }: { className?: string }) {
+  const b = useBrandingUrls();
+  const src = b.markUrl || "/empatix-mark.svg";
   return (
     <img
-      src="/empatix-mark.svg"
+      src={src}
       alt="Empatix"
       className={className}
       loading="eager"
@@ -18,7 +26,11 @@ export function LogoMark({ className = "" }: { className?: string }) {
 }
 
 export function Logo({ variant = "full", className = "" }: LogoProps) {
-  const src = variant === "full" ? "/empatix-logo-white.svg" : "/empatix-mark.svg";
+  const b = useBrandingUrls();
+  const src =
+    variant === "full"
+      ? b.logoWhiteUrl || "/empatix-logo-white.svg"
+      : b.markUrl || "/empatix-mark.svg";
   return (
     <Link
       to="/"
@@ -34,4 +46,10 @@ export function Logo({ variant = "full", className = "" }: LogoProps) {
       />
     </Link>
   );
+}
+
+/** Returns the hero logo URL (large decorative element above fold). */
+export function useHeroLogoUrl(): string {
+  const b = useBrandingUrls();
+  return b.logoDarkUrl || "/empatix-logo-dark.svg";
 }
