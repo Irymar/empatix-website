@@ -73,13 +73,69 @@ export const Route = createFileRoute("/api/public/contact")({
           );
         }
 
-        // No persistence layer wired yet — just log so it appears in worker logs.
         console.log("[contact] new submission", {
           ip,
           email: data.email,
           interests: data.interests,
           message_len: data.message.length,
         });
+
+        // HubSpot CRM — create or update contact
+        const hubspotToken = process.env.HUBSPOT_ACCESS_TOKEN;
+        if (hubspotToken) {
+          try {
+            const [firstName, ...rest] = data.name.trim().split(/\s+/);
+            const lastName = rest.join(" ") || "";
+            const properties: Record<string, string> = {
+              email: data.email,
+              firstname: firstName,
+              lastname: lastName,
+              company: data.company,
+              jobtitle: data.role,
+              message: [
+                data.message,
+                data.interests.length ? `Interests: ${data.interests.join(", ")}` : "",
+              ]
+                .filter(Boolean)
+                .join("\n\n"),
+            };
+            const hsRes = await fetch(
+              "https://api.hubapi.com/crm/v3/objects/contacts",
+              {
+                method: "POST",
+                headers: {
+                  Authorization: `Bearer ${hubspotToken}`,
+                  "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ properties }),
+              },
+            );
+            if (!hsRes.ok) {
+              const body = await hsRes.text();
+              // 409 = contact already exists — update it instead
+              if (hsRes.status === 409) {
+                const idMatch = body.match(/"id"\s*:\s*"(\d+)"/);
+                if (idMatch) {
+                  await fetch(
+                    `https://api.hubapi.com/crm/v3/objects/contacts/${idMatch[1]}`,
+                    {
+                      method: "PATCH",
+                      headers: {
+                        Authorization: `Bearer ${hubspotToken}`,
+                        "Content-Type": "application/json",
+                      },
+                      body: JSON.stringify({ properties }),
+                    },
+                  );
+                }
+              } else {
+                console.error("[contact] HubSpot error", hsRes.status, body);
+              }
+            }
+          } catch (err) {
+            console.error("[contact] HubSpot fetch failed", err);
+          }
+        }
 
         return Response.json({ ok: true });
       },

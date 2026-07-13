@@ -7,7 +7,7 @@ import {
   HeadContent,
   Scripts,
 } from "@tanstack/react-router";
-import { type ReactNode } from "react";
+import { type ReactNode, useEffect } from "react";
 import { MotionConfig } from "framer-motion";
 import { Toaster } from "@/components/ui/sonner";
 import { CmsOverlay } from "@/components/admin/CmsOverlay";
@@ -177,6 +177,23 @@ function RootShell({ children }: { children: ReactNode }) {
 
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
+
+  // HubSpot chat widget — loads only when VITE_HUBSPOT_PORTAL_ID is set
+  useEffect(() => {
+    const portalId = import.meta.env.VITE_HUBSPOT_PORTAL_ID as string | undefined;
+    if (!portalId) return;
+    if (document.getElementById("hs-script-loader")) return;
+    const s = document.createElement("script");
+    s.id = "hs-script-loader";
+    s.type = "text/javascript";
+    s.async = true;
+    s.defer = true;
+    s.src = `//js.hs-scripts.com/${portalId}.js`;
+    document.body.appendChild(s);
+    return () => {
+      document.getElementById("hs-script-loader")?.remove();
+    };
+  }, []);
 
   return (
     <QueryClientProvider client={queryClient}>
