@@ -272,6 +272,7 @@ export interface FileRoutesById {
   '/team-extension': typeof TeamExtensionRoute
   '/terms': typeof TermsRoute
   '/admin/audit': typeof AdminAuditRoute
+  '/admin/branding': typeof AdminBrandingRoute
   '/admin/editor': typeof AdminEditorRoute
   '/admin/login': typeof AdminLoginRoute
   '/admin/media': typeof AdminMediaRoute

@@ -13,6 +13,7 @@ import { Toaster } from "@/components/ui/sonner";
 import { CmsOverlay } from "@/components/admin/CmsOverlay";
 import { useCmsRealtime } from "@/lib/cms/useCmsContent";
 import { OG_DEFAULT_URL } from "@/lib/seo";
+import { publicGetSection } from "@/lib/admin/content.functions";
 
 import appCss from "../styles.css?url";
 function NotFoundComponent() {
@@ -72,6 +73,13 @@ function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
 }
 
 export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()({
+  loader: async ({ context: { queryClient } }) => {
+    await queryClient.ensureQueryData({
+      queryKey: ["cms", "section", "branding"],
+      queryFn: () => publicGetSection({ data: { key: "branding" } }),
+      staleTime: 30_000,
+    });
+  },
   head: () => ({
     meta: [
       { charSet: "utf-8" },
@@ -178,11 +186,30 @@ function RootShell({ children }: { children: ReactNode }) {
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
 
-  // HubSpot chat widget — loads only when VITE_HUBSPOT_PORTAL_ID is set
+  // HubSpot chat widget — loads only when VITE_HUBSPOT_PORTAL_ID is set.
+  // We use a MutationObserver + inline !important to lift the widget above
+  // bottom-of-page CTAs. HubSpot's own stylesheet uses bottom:0px !important,
+  // so a plain CSS rule in our stylesheet can't win; an inline !important can.
   useEffect(() => {
     const portalId = import.meta.env.VITE_HUBSPOT_PORTAL_ID as string | undefined;
     if (!portalId) return;
     if (document.getElementById("hs-script-loader")) return;
+
+    let attrObserver: MutationObserver | null = null;
+    const applyOffset = (el: HTMLElement) =>
+      el.style.setProperty("bottom", "80px", "important");
+
+    const bodyObserver = new MutationObserver(() => {
+      const container = document.getElementById("hubspot-messages-iframe-container");
+      if (container && !attrObserver) {
+        applyOffset(container);
+        attrObserver = new MutationObserver(() => applyOffset(container));
+        attrObserver.observe(container, { attributes: true, attributeFilter: ["style"] });
+        bodyObserver.disconnect();
+      }
+    });
+    bodyObserver.observe(document.body, { childList: true });
+
     const s = document.createElement("script");
     s.id = "hs-script-loader";
     s.type = "text/javascript";
@@ -192,6 +219,8 @@ function RootComponent() {
     document.body.appendChild(s);
     return () => {
       document.getElementById("hs-script-loader")?.remove();
+      bodyObserver.disconnect();
+      attrObserver?.disconnect();
     };
   }, []);
 
