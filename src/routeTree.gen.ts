@@ -28,6 +28,7 @@ import { Route as TermsRouteImport } from './routes/terms'
 import { Route as AdminIndexRouteImport } from './routes/admin.index'
 import { Route as AdminAccountRouteImport } from './routes/admin.account'
 import { Route as AdminAuditRouteImport } from './routes/admin.audit'
+import { Route as AdminBrandingRouteImport } from './routes/admin.branding'
 import { Route as AdminEditorRouteImport } from './routes/admin.editor'
 import { Route as AdminInsightsRouteImport } from './routes/admin.insights'
 import { Route as AdminLoginRouteImport } from './routes/admin.login'
@@ -138,6 +139,11 @@ const AdminAuditRoute = AdminAuditRouteImport.update({
   path: '/audit',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminBrandingRoute = AdminBrandingRouteImport.update({
+  id: '/branding',
+  path: '/branding',
+  getParentRoute: () => AdminRoute,
+} as any)
 const AdminEditorRoute = AdminEditorRouteImport.update({
   id: '/editor',
   path: '/editor',
@@ -228,6 +234,7 @@ export interface FileRoutesByFullPath {
   '/terms': typeof TermsRoute
   '/admin/account': typeof AdminAccountRoute
   '/admin/audit': typeof AdminAuditRoute
+  '/admin/branding': typeof AdminBrandingRoute
   '/admin/editor': typeof AdminEditorRoute
   '/admin/insights': typeof AdminInsightsRouteWithChildren
   '/admin/login': typeof AdminLoginRoute
@@ -261,6 +268,7 @@ export interface FileRoutesByTo {
   '/terms': typeof TermsRoute
   '/admin/account': typeof AdminAccountRoute
   '/admin/audit': typeof AdminAuditRoute
+  '/admin/branding': typeof AdminBrandingRoute
   '/admin/editor': typeof AdminEditorRoute
   '/admin/insights': typeof AdminInsightsRouteWithChildren
   '/admin/login': typeof AdminLoginRoute
@@ -297,6 +305,7 @@ export interface FileRoutesById {
   '/terms': typeof TermsRoute
   '/admin/account': typeof AdminAccountRoute
   '/admin/audit': typeof AdminAuditRoute
+  '/admin/branding': typeof AdminBrandingRoute
   '/admin/editor': typeof AdminEditorRoute
   '/admin/insights': typeof AdminInsightsRouteWithChildren
   '/admin/login': typeof AdminLoginRoute
@@ -334,6 +343,7 @@ export interface FileRouteTypes {
     | '/terms'
     | '/admin/account'
     | '/admin/audit'
+    | '/admin/branding'
     | '/admin/editor'
     | '/admin/insights'
     | '/admin/login'
@@ -367,6 +377,7 @@ export interface FileRouteTypes {
     | '/terms'
     | '/admin/account'
     | '/admin/audit'
+    | '/admin/branding'
     | '/admin/editor'
     | '/admin/insights'
     | '/admin/login'
@@ -402,6 +413,7 @@ export interface FileRouteTypes {
     | '/terms'
     | '/admin/account'
     | '/admin/audit'
+    | '/admin/branding'
     | '/admin/editor'
     | '/admin/insights'
     | '/admin/login'
@@ -575,6 +587,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminAuditRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/branding': {
+      id: '/admin/branding'
+      path: '/branding'
+      fullPath: '/admin/branding'
+      preLoaderRoute: typeof AdminBrandingRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/editor': {
       id: '/admin/editor'
       path: '/editor'
@@ -702,6 +721,7 @@ const AdminCollectionsTypeRouteWithChildren =
 interface AdminRouteChildren {
   AdminAccountRoute: typeof AdminAccountRoute
   AdminAuditRoute: typeof AdminAuditRoute
+  AdminBrandingRoute: typeof AdminBrandingRoute
   AdminEditorRoute: typeof AdminEditorRoute
   AdminInsightsRoute: typeof AdminInsightsRouteWithChildren
   AdminLoginRoute: typeof AdminLoginRoute
@@ -716,6 +736,7 @@ interface AdminRouteChildren {
 const AdminRouteChildren: AdminRouteChildren = {
   AdminAccountRoute: AdminAccountRoute,
   AdminAuditRoute: AdminAuditRoute,
+  AdminBrandingRoute: AdminBrandingRoute,
   AdminEditorRoute: AdminEditorRoute,
   AdminInsightsRoute: AdminInsightsRouteWithChildren,
   AdminLoginRoute: AdminLoginRoute,

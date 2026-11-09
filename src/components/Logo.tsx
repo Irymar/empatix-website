@@ -1,6 +1,6 @@
 import { Link } from "@tanstack/react-router";
-import logoAsset from "@/assets/empatix-logo-white.png.asset.json";
-import markAsset from "@/assets/empatix-mark.png.asset.json";
+import logoAsset from "@/assets/empatix-logo-white.png";
+import markAsset from "@/assets/empatix_mark_filled.png";
 
 interface LogoProps {
   variant?: "full" | "mark";
@@ -10,7 +10,7 @@ interface LogoProps {
 export function LogoMark({ className = "" }: { className?: string }) {
   return (
     <img
-      src={markAsset.url}
+      src={markAsset}
       alt="Empatix — AI products and automation"
       className={className}
       loading="eager"
@@ -20,7 +20,7 @@ export function LogoMark({ className = "" }: { className?: string }) {
 }
 
 export function Logo({ variant = "full", className = "" }: LogoProps) {
-  const src = variant === "full" ? logoAsset.url : markAsset.url;
+  const src = variant === "full" ? logoAsset : markAsset;
   return (
     <Link
       to="/"

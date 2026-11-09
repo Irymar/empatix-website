@@ -1,8 +1,8 @@
-import ogDefaultAsset from "@/assets/og-default.jpg.asset.json";
+import ogDefaultAsset from "@/assets/og-default.jpg";
 
 const SITE_ORIGIN = "https://empathic-site-studio.lovable.app";
 
-export const OG_DEFAULT_URL = SITE_ORIGIN + ogDefaultAsset.url;
+export const OG_DEFAULT_URL = new URL(ogDefaultAsset, SITE_ORIGIN).href;
 
 
 function absoluteUrl(path: string) {

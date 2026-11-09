@@ -3,6 +3,7 @@ import { ArrowLeft, Link2, Linkedin, Check } from "lucide-react";
 import { useState } from "react";
 import { IconButton, PillBadge } from "@/components/ds";
 import type { ArticlePost } from "@/lib/insights-content";
+import { safeArticleHtml } from "@/lib/admin/insights-validation";
 function CategoryBadges({ cats, max = 4 }: { cats: string[]; max?: number }) {
   const visible = cats.slice(0, max);
   const extra = cats.length - visible.length;
@@ -58,7 +59,7 @@ export function ArticleView({ post, related = [] }: { post: ArticlePost; related
         {/* Body + sidebar */}
         <div className="mt-12 grid gap-8 lg:grid-cols-[1fr_360px]">
           <div className="max-w-2xl">
-            {post.bodyHtml !== undefined ? <div className="article-content" dangerouslySetInnerHTML={{__html: post.bodyHtml}} /> : post.body.map((p: string, i: number) => (
+            {post.bodyHtml !== undefined ? <div className="article-content" dangerouslySetInnerHTML={{__html: safeArticleHtml(post.bodyHtml)}} /> : post.body.map((p: string, i: number) => (
               <p
                 key={i}
                 className={

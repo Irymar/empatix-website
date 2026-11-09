@@ -17,7 +17,7 @@ import caseFineClause from "@/assets/case-fine-clause.jpg";
 import caseAiSdr from "@/assets/case-ai-sdr.jpg";
 import caseGalaxy from "@/assets/case-galaxy-connext.jpg";
 import caseSiteParsers from "@/assets/case-site-parsers.jpg";
-import empatixLogoAsset from "@/assets/empatix-logo.png.asset.json";
+import empatixLogoAsset from "@/assets/empatix-logo.png";
 import ctaDiscoveryBg from "@/assets/cta-discovery-bg.jpg";
 
 const EASE = [0.22, 1, 0.36, 1] as const;
@@ -176,8 +176,8 @@ function Hero() {
           style={{
             background:
               "linear-gradient(115deg, #6FA8FF 0%, #6FA8FF 42%, #2547E0 50%, #1B3A99 70%, #050912 100%)",
-            WebkitMaskImage: `url(${empatixLogoAsset.url})`,
-            maskImage: `url(${empatixLogoAsset.url})`,
+            WebkitMaskImage: `url(${empatixLogoAsset})`,
+            maskImage: `url(${empatixLogoAsset})`,
             WebkitMaskRepeat: "no-repeat",
             maskRepeat: "no-repeat",
             WebkitMaskSize: "contain",
